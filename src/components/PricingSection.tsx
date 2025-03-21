@@ -83,10 +83,10 @@ const PricingSection = () => {
     <section className="py-20 px-6 md:px-10" id="pricing">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Transparent Pricing
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 delay-100">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the plan that works best for your business needs
           </p>
         </div>
@@ -121,11 +121,10 @@ const PricingSection = () => {
             <Card 
               key={index} 
               className={cn(
-                "relative border h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-700",
+                "relative border h-full",
                 plan.popular ? "bg-[#111827] text-white border-primary/20" : "bg-card",
                 plan.popular ? "" : "border-muted"
               )}
-              style={{ transitionDelay: `${300 + index * 150}ms` }}
             >
               {plan.popular && (
                 <Badge 
