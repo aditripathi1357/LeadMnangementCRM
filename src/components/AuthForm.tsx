@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
 import { ChevronLeft, EyeIcon, EyeOffIcon } from 'lucide-react';
+import { login, register } from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
 
 interface AuthFormProps {
   type: 'login' | 'signup';
@@ -22,6 +24,8 @@ interface FormState {
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const { toast } = useToast();
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formState, setFormState] = useState<FormState>({
@@ -49,28 +53,39 @@ const AuthForm = ({ type }: AuthFormProps) => {
     setIsLoading(true);
 
     try {
-      // Simulate API request
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       if (type === 'login') {
-        // Login logic would go here
+        const response = await login({
+          email: formState.email,
+          password: formState.password,
+        });
+        setUser(response.user);
         toast({
           title: "Login Successful",
           description: "Welcome back to CallTrack!",
         });
+        navigate('/dashboard');
       } else {
-        // Signup logic would go here
+        if (!formState.firstName || !formState.lastName || !formState.acceptTerms) {
+          throw new Error('Please fill all required fields');
+        }
+        const response = await register({
+          firstName: formState.firstName,
+          lastName: formState.lastName,
+          email: formState.email,
+          password: formState.password,
+        });
+        setUser(response.user);
         toast({
           title: "Account Created",
           description: "Welcome to CallTrack! Your account has been created successfully.",
         });
+        navigate('/dashboard');
       }
-
-      // Clear form or redirect
     } catch (error) {
+      console.error('Authentication error:', error);
       toast({
         title: "Authentication Error",
-        description: "There was a problem processing your request. Please try again.",
+        description: error instanceof Error ? error.message : "There was a problem processing your request. Please try again.",
         variant: "destructive",
       });
     } finally {
